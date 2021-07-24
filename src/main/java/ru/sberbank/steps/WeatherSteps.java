@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 //http://api.weatherstack.com/current?access_key=065f09178afe42f73b587ef46cc669b5&query=New%20York
 public class WeatherSteps {
     private static final String KEY = "065f09178afe42f73b587ef46cc669b5";
-    private static final String NEW_YORK = "New York";
     private static final String BASE_URL = "http://api.weatherstack.com/";
     private Response response;
 
@@ -31,26 +30,13 @@ public class WeatherSteps {
         RequestSpecification httpRequest = RestAssured.given();
         Response response = httpRequest.get("/current" + "?access_key=" + KEY + "&"
                 + "query=" + city);
-        System.out.println(response.getBody().prettyPrint());
+//        System.out.println(response.getBody().prettyPrint());
         Assert.assertEquals(200, response.getStatusCode());
         this.response = response;
     }
 
-    @When("check location parameters {string} {string} {string}")
-    public void checkWeatherLocation(String city, String country, String region) {
-        System.out.println(response.prettyPrint());
-        JsonPath jsonPathEvaluator = response.jsonPath();
-
-        Map<String, String> mapParams = jsonPathEvaluator.getMap("location");
-
-        assertAll(
-                () -> assertEquals(city, mapParams.get("name")),
-                () -> assertEquals(country, mapParams.get("country")),
-                () -> assertEquals(region, mapParams.get("region")));
-    }
-
     @When("check request parameters {string} {string} {string} {string}")
-    public void checkWeatherLocation(String type, String query, String language, String unit) {
+    public void checkWeatherRequest(String type, String query, String language, String unit) {
         JsonPath jsonPathEvaluator = response.jsonPath();
 
         Map<String, String> mapParams = jsonPathEvaluator.getMap("request");
@@ -61,4 +47,18 @@ public class WeatherSteps {
                 () -> assertEquals(language, mapParams.get("language")),
                 () -> assertEquals(unit, mapParams.get("unit")));
     }
+
+    @When("check location parameters {string} {string} {string}")
+    public void checkWeatherLocation(String city, String country, String region) {
+//        System.out.println(response.prettyPrint());
+        JsonPath jsonPathEvaluator = response.jsonPath();
+
+        Map<String, String> mapParams = jsonPathEvaluator.getMap("location");
+
+        assertAll(
+                () -> assertEquals(city, mapParams.get("name")),
+                () -> assertEquals(country, mapParams.get("country")),
+                () -> assertEquals(region, mapParams.get("region")));
+    }
+
 }
